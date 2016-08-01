@@ -13,9 +13,21 @@ app.get('/', function(req, res){
 	res.send('Todo API Root');
 });
 
-//GET /todos
+//GET /todos?completed=true
 app.get('/todos', function(req, res){
-	res.json(todos);
+	var queryParams = req.query;
+	var filteredTodos = todos;
+
+	if(queryParams.hasOwnProperty('completed') && queryParams.completed === 'true'){
+		filteredTodos = _.where(filteredTodos, {completed: true});
+	} else if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'false'){
+		filteredTodos = _.where(filteredTodos, {completed: false});
+	}
+	//if has property && completed === 'true'
+	// filteredTodos == _.where(filteredTodos, {completed: true})
+	// else if has prop && completed ==='false'
+
+	res.json(filteredTodos);
 });
 //GET /todos/:id
 app.get('/todos/:id', function(req,res){
@@ -25,11 +37,6 @@ app.get('/todos/:id', function(req,res){
 	if (!matchedTodo){
 		res.status(404).json({"error":"no todo found with that id"});
 	}
-	// if (matchedTodo){
-	// 	res.json(matchedTodo);
-	// } else { 
-	// 	res.status(404).send();
-	// }
 });
 /* solution without underscore
 app.get('/todos/:id', function(req,res){
